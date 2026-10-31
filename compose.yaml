@@ -1,0 +1,15 @@
+services:
+  ryadom:
+    build: .
+    ports:
+      - "127.0.0.1:3000:3000"
+    environment:
+      LLM_BASE_URL: ${LLM_BASE_URL:-https://api.openai.com/v1}
+      LLM_API_KEY: ${LLM_API_KEY:-}
+      LLM_MODEL: ${LLM_MODEL:-}
+      LLM_SEARCH: ${LLM_SEARCH:-false}
+    volumes:
+      - ryadom-data:/app/.local
+    restart: unless-stopped
+volumes:
+  ryadom-data:

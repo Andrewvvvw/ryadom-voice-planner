@@ -1,0 +1,11 @@
+.git
+.agents
+.codex
+.aws
+.env
+.env.*
+node_modules
+.local
+dist
+output
+*.log
