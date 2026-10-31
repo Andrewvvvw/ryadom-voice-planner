@@ -1,0 +1,11 @@
+node_modules/
+.env
+.env.*
+!.env.example
+.local/
+dist/
+output/
+*.sqlite*
+*.log
+.DS_Store
+.openai/sites.local.json

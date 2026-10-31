@@ -1,0 +1,17 @@
+{
+  "name": "ryadom-voice-planner",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "engines": { "node": ">=22.13.0" },
+  "scripts": {
+    "dev": "node --env-file-if-exists=.env scripts/server.mjs",
+    "start": "node --env-file-if-exists=.env scripts/server.mjs",
+    "test": "node --test tests/*.test.mjs",
+    "build": "node scripts/build.mjs",
+    "db:generate": "drizzle-kit generate",
+    "data:convert": "python3 scripts/convert-data.py"
+  },
+  "dependencies": { "chrono-node": "2.9.0", "snowball-stemmers": "0.6.0", "zod": "3.25.76" },
+  "devDependencies": { "drizzle-kit": "0.31.8", "drizzle-orm": "0.44.7", "esbuild": "0.25.12" }
+}
