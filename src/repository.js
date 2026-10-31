@@ -1,4 +1,5 @@
 import seed from '../data/events.json' with { type: 'json' };
+const fields = 'id,type,title,date,time,duration,status,source_id,created_at,updated_at';
 
 export class Repository {
   constructor(db, tenant) { this.db = db; this.tenant = tenant; }
@@ -12,13 +13,13 @@ export class Repository {
     for (let offset = 0; offset < seed.length; offset += 80) {
       await this.db.batch(seed.slice(offset, offset + 80).map(row => {
         const type = /^(?:встреча|созвон|демо|совещание|интервью)/i.test(row.text) ? 'meeting' : /^напом/i.test(row.text) ? 'reminder' : 'task';
-        return this.sql('INSERT OR IGNORE INTO events (id,tenant,type,title,date,time,duration,status,source_id,created_at,updated_at) VALUES (?,?,?,?,?,?,60,\'pending\',?,?,?)', `${this.tenant}:seed:${row.id}`, this.tenant, type, row.text, row.date, row.time, Number(row.id), created, created);
+        return this.sql('INSERT OR IGNORE INTO events (id,tenant,type,title,date,time,duration,status,source_id,created_at,updated_at) VALUES (?,?,?,?,?,?,60,\'pending\',?,?,?)', crypto.randomUUID(), this.tenant, type, row.text, row.date, row.time, Number(row.id), created, created);
       }));
     }
     await this.sql('UPDATE tenants SET seeded=1 WHERE id=?', this.tenant).run();
   }
-  async all() { return (await this.sql('SELECT * FROM events WHERE tenant=? ORDER BY date DESC, time DESC, id', this.tenant).all()).results; }
-  async get(id) { return this.sql('SELECT * FROM events WHERE tenant=? AND id=?', this.tenant, id).first(); }
+  async all() { return (await this.sql(`SELECT ${fields} FROM events WHERE tenant=? ORDER BY date DESC, time DESC, id`, this.tenant).all()).results; }
+  async get(id) { return this.sql(`SELECT ${fields} FROM events WHERE tenant=? AND id=?`, this.tenant, id).first(); }
   async list({ start, end, type = null, status = null, limit = 100, offset = 0, includeUndated = false } = {}) {
     const filters = ['tenant=?'], args = [this.tenant];
     if (start) { filters.push(includeUndated ? '(date>=? OR date IS NULL)' : 'date>=?'); args.push(start); }
@@ -27,7 +28,8 @@ export class Repository {
     if (status) { filters.push('status=?'); args.push(status); }
     const where = filters.join(' AND ');
     const count = await this.sql(`SELECT COUNT(*) AS total FROM events WHERE ${where}`, ...args).first();
-    const rows = await this.sql(`SELECT * FROM events WHERE ${where} ORDER BY date IS NULL,date,time IS NULL,time,id LIMIT ? OFFSET ?`, ...args, limit, offset).all();
+    const order = includeUndated ? 'date IS NOT NULL,date,time IS NULL,time,id' : 'date IS NULL,date,time IS NULL,time,id';
+    const rows = await this.sql(`SELECT ${fields} FROM events WHERE ${where} ORDER BY ${order} LIMIT ? OFFSET ?`, ...args, limit, offset).all();
     return { events: rows.results, total: count.total, limit, offset };
   }
   async stats(today, end) {

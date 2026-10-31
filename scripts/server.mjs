@@ -2,7 +2,7 @@ import { createServer } from 'node:http';
 import { mkdirSync } from 'node:fs';
 import { dirname } from 'node:path';
 import { openDatabase } from './sqlite.mjs';
-await import('./build.mjs');
+if (process.env.SKIP_BUILD !== '1') await import('./build.mjs');
 const { default: worker } = await import('../dist/server/index.js');
 const path = process.env.DATABASE_PATH || '.local/ryadom.sqlite';
 if (path !== ':memory:') mkdirSync(dirname(path), { recursive: true });
@@ -23,5 +23,6 @@ const server = createServer(async (req, res) => {
     res.end(Buffer.from(await response.arrayBuffer()));
   } catch { res.writeHead(500); res.end('Internal error'); }
 });
+server.on('error', error => { console.error(`Не удалось запустить сервер: ${error.code}. Проверьте HOST и PORT.`); db.close(); process.exit(1); });
 server.listen(port, host, () => console.log(`Рядом: http://${host}:${port}`));
 for (const signal of ['SIGINT', 'SIGTERM']) process.on(signal, () => server.close(() => { db.close(); process.exit(0); }));

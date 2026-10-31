@@ -20,7 +20,8 @@ export function localInterpret(text, options = {}, state = {}) {
   const s = text.toLowerCase().replaceAll('ё', 'е').trim();
   if (/^(?:отмена|отмени|не надо|забудь|стоп)[.!]?$/u.test(s)) return { action: 'cancel' };
   if (/^(?:да|подтверждаю|удали|все равно|сохрани)[.!]?$/u.test(s) && state.pending?.confirmation) return { action: 'confirm' };
-  const temporal = parseTemporal(text, options);
+  // Duration belongs to the meeting, not to its start time (Chrono also recognizes durations).
+  const temporal = parseTemporal(text.replace(/на\s+\d+\s*(?:минут[уы]?|час(?:а|ов)?)/iu, ''), options);
   const explicitCreate = /создай|добавь|запиши|напомни|поставь|запланируй/.test(s);
   const mutation = /перенес|перенеси|сдвинь|измени/.test(s) ? 'reschedule' : /удал[иь]|убери|отмени встреч|отмени задач/.test(s) ? 'delete' : /выполнен|сделан|заверши|отметь|закончи/.test(s) ? 'complete' : null;
   if (mutation) return { action: mutation, query: temporal.clean, draft: Draft.parse({ date: temporal.date, time: temporal.time }), type: queryType(s) };

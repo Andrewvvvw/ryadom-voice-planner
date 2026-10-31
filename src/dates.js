@@ -15,6 +15,10 @@ export const validTime = value => value == null || /^([01]\d|2[0-3]):[0-5]\d$/.t
 export function parseTemporal(text, { now = new Date(), timezone = 'Europe/Minsk', forward = true } = {}) {
   const clock = localNow(now, timezone);
   const source = text.toLowerCase().replaceAll('ё', 'е');
+  const explicitIso = source.match(/\b(\d{4}-\d{2}-\d{2})\b/);
+  if (explicitIso && !validDate(explicitIso[1])) throw new RangeError('Invalid explicit date');
+  const explicitTime = source.match(/(?:^|\s)(\d{1,2}):(\d{2})(?!\d)/);
+  if (explicitTime && !validTime(`${explicitTime[1].padStart(2, '0')}:${explicitTime[2]}`)) throw new RangeError('Invalid explicit time');
   const reference = { instant: new Date(clock + ':00Z'), timezone: 0 };
   const results = ru.parse(source, reference, { forwardDate: forward });
   let date = null, time = null;

@@ -34,6 +34,7 @@ function speak(text) {
 }
 function appendMessage(role, text, response) {
   $('#welcome')?.remove();
+  if (role === 'assistant') document.querySelectorAll('.confirmation-actions button').forEach(b => { b.disabled = true; });
   const row = el('div', `message ${role}`), avatar = el('span', 'message-avatar', role === 'user' ? 'Я' : '✳');
   const body = el('div', 'message-body', text);
   if (response?.events?.length) {
@@ -141,6 +142,7 @@ async function sendMessage(text, targetId, retryId, existingUserRow) {
   const userRow = existingUserRow || appendMessage('user', text);
   $('#message').value = ''; $('#message').style.height = '';
   state.busy = true; $('#send').disabled = true; $('#mic').disabled = true;
+  document.querySelectorAll('.confirmation-actions button').forEach(b => { b.disabled = true; });
   const waiting = appendMessage('assistant', 'Думаю…');
   const requestId = retryId || crypto.randomUUID();
   try {

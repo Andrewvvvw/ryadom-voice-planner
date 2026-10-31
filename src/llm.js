@@ -30,6 +30,7 @@ export async function interpret(text, options, state, env = {}) {
       { role: 'user', content: JSON.stringify({ now: localNow(options.now, options.timezone), timezone: options.timezone, pending: state.pending || null, text }) },
     ]);
     const intent = Interpretation.parse(data);
+    if (intent.action === 'confirm' && fallback.action !== 'confirm') throw new Error('Explicit confirmation required');
     // Require complete structures rather than allowing an unvalidated model action to execute.
     if (intent.action === 'create' && !intent.draft) throw new Error('Missing draft');
     if (intent.action === 'list' && (!intent.period || (intent.period.start && intent.period.end && intent.period.start >= intent.period.end))) throw new Error('Invalid period');

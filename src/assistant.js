@@ -92,6 +92,7 @@ export async function chat(repo, input, env = {}, clock = new Date()) {
   }
   if (['delete', 'complete', 'reschedule'].includes(intent.action)) {
     let target = input.targetId ? await repo.get(input.targetId) : null;
+    if (input.targetId && !target) throw Object.assign(new Error('Запись не найдена.'), { status: 404 });
     if (!target && state.pending?.targetId) target = await repo.get(state.pending.targetId);
     if (!target && pronoun(input.text) && state.lastEventId) target = await repo.get(state.lastEventId);
     if (!target) {
