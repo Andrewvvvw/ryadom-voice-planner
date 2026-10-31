@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#f7f7f2"><meta name="description" content="Рядом — голосовой помощник для задач, напоминаний и встреч.">
+  <title>Рядом — ваши планы, простыми словами</title>
+  <link rel="icon" href="/favicon.svg"><link rel="stylesheet" href="/styles.css"><script src="/app.js" defer></script>
+</head>
+<body>
+  <aside class="sidebar">
+    <a class="brand" href="/" aria-label="Рядом, главная"><span class="brand-icon"><i></i><i></i><i></i><i></i></span>рядом<span class="brand-dot">.</span></a>
+    <div class="workspace"><span class="avatar">Я</span><div>Личное пространство<small>Всё под рукой</small></div><span class="workspace-arrow">⌄</span></div>
+    <div class="nav-label">МОЁ ПРОСТРАНСТВО</div>
+    <nav aria-label="Навигация"><button class="nav-item active" data-view="today"><span>◷</span>Мой день<span class="nav-count" id="nav-count">—</span></button><button class="nav-item" data-view="week"><span>▦</span>На неделю</button><button class="nav-item" data-view="tasks"><span>☑</span>Задачи</button><button class="nav-item" data-view="archive"><span>▤</span>Вся история</button></nav>
+    <div class="sidebar-note"><span class="note-spark">✧</span><p>Освободите голову.<br>Остальное запомним.</p><small>Просто скажите, что нужно сделать.</small><div class="note-wave"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div></div>
+    <div class="sidebar-bottom"><span class="online-dot"></span><span id="engine-sidebar">Подключаемся…</span><small>ПРОТОТИП · V1.0</small></div>
+  </aside>
+  <main>
+    <header class="topbar"><div class="breadcrumb">Личное пространство <span>/</span> <strong id="view-label">Мой день</strong></div><div class="header-actions"><span id="header-date"></span><button class="icon-button" id="notifications" title="Включить напоминания в браузере" aria-label="Включить напоминания">♧</button><span class="user-avatar">Я</span></div></header>
+    <div class="page">
+      <section class="page-heading"><div><div class="eyebrow">МЕНЬШЕ СУЕТЫ, БОЛЬШЕ ЯСНОСТИ</div><h1 id="greeting">Хороший день для ваших планов<span>.</span></h1><p>Задачи, встречи и мысли — у всего есть своё место.</p></div><button class="secondary-button" id="export-button">↓ <span>Экспорт данных</span></button></section>
+      <section class="stats" aria-label="Обзор"><article class="stat"><span class="stat-icon peach">◷</span><div><small>В планах на сегодня</small><strong id="stat-today">—</strong></div><span class="stat-label">событий</span></article><article class="stat"><span class="stat-icon sage">▦</span><div><small>Встречи за 7 дней</small><strong id="stat-meetings">—</strong></div><span class="stat-label">на горизонте</span></article><article class="stat"><span class="stat-icon lavender">✓</span><div><small>Завершено</small><strong id="stat-done">—</strong></div><span class="stat-label">можно выдохнуть</span></article></section>
+      <div class="content-grid">
+        <section class="assistant panel" aria-label="Диалог с ассистентом">
+          <div class="panel-heading"><div class="assistant-title"><span class="mini-brand">✳</span><div><h2>Давайте по порядку</h2><small><span class="online-dot"></span><span id="engine-label">Загружаем данные</span></small></div></div><button class="icon-button" id="new-chat" title="Новый диалог" aria-label="Начать новый диалог">↻</button></div>
+          <div class="chat" id="chat" role="log" aria-live="polite" aria-label="История диалога"><div class="welcome" id="welcome"><div class="welcome-orb"><span>✳</span></div><h3>Я рядом. Что запланируем?</h3><p>Говорите или пишите, как привыкли.<br>Я помогу сохранить важное и найти забытое.</p><div class="suggestions"><button data-prompt="Напомни мне завтра в 10 утра позвонить Ивану"><span>↗</span> Напомни завтра позвонить Ивану</button><button data-prompt="Что запланировано на эту неделю?"><span>▦</span> Какие планы на эту неделю?</button><button data-prompt="Найди задачу про презентацию"><span>⌕</span> Найди задачу про презентацию</button></div></div></div>
+          <div class="composer-wrap"><div class="speech-status" id="speech-status" role="status"></div><form class="composer" id="chat-form"><label class="sr-only" for="message">Сообщение ассистенту</label><textarea id="message" rows="1" maxlength="2000" placeholder="Например, встреча с командой завтра в 15:00" required></textarea><div class="composer-actions"><button class="mic-button" type="button" id="mic" aria-label="Начать голосовой ввод" title="Голосовой ввод"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="9" y="3" width="6" height="12" rx="3"/><path d="M5 10v2a7 7 0 0 0 14 0v-2M12 19v3m-4 0h8"/></svg></button><button class="send-button" type="submit" id="send" aria-label="Отправить сообщение">↑</button></div></form><div class="composer-footer"><span><kbd>Enter</kbd> отправить · <kbd>Shift ↵</kbd> новая строка</span><label class="tts-toggle"><input type="checkbox" id="tts"> Озвучивать ответы</label></div></div>
+        </section>
+        <section class="agenda panel" aria-label="События">
+          <div class="panel-heading agenda-heading"><div><h2 id="agenda-title">Сегодня</h2><small id="agenda-subtitle">Время для того, что важно</small></div><span class="agenda-date" id="agenda-date">—</span></div>
+          <div class="agenda-toolbar"><div class="tabs" role="group" aria-label="Тип событий"><button class="selected" data-filter="">Всё</button><button data-filter="task">Задачи</button><button data-filter="meeting">Встречи</button><button data-filter="reminder" aria-label="Напоминания" title="Напоминания">◷</button></div><button class="icon-button" id="refresh" title="Обновить список" aria-label="Обновить список">↻</button></div>
+          <form class="search-form" id="search-form"><span>⌕</span><label class="sr-only" for="search">Поиск по всей истории</label><input id="search" placeholder="Найти в истории…" maxlength="300"><button type="submit" aria-label="Найти">↵</button></form>
+          <div class="event-list" id="events" aria-live="polite"><div class="empty-state">Загружаем ваши планы…</div></div>
+          <button class="load-more secondary-button" id="load-more" hidden>Показать ещё</button>
+          <div class="agenda-footnote"><span class="online-dot"></span><span id="dataset-note">1 000 записей из исходного набора</span></div>
+        </section>
+      </div>
+      <footer class="page-footer"><span>Рядом с вашими планами.</span><span>Часовой пояс: Europe/Minsk · Голосовой ввод зависит от браузера</span></footer>
+    </div>
+  </main>
+  <div id="toast" class="toast" role="status" hidden></div>
+</body>
+</html>
